@@ -2,55 +2,51 @@
 ; Brandon Gray (started 3/18/09)
 ;
 ; Current ideas:
-;; mapfile (fn file-name) : apply function to each line of file
-;; lines-in-file (file-name) : count lines in file
 ;; (f1 f2) : is f1 newer than f2?
 ;; file-size (f1) : size of f1 in bytes
 
 (ns clojure.unix.unix-sys
   (:require [clojure.contrib.shell-out :as shell]
 	    [clojure.contrib.seq-utils :as seq]
-	    [clojure.contrib.str-utils :as str-u]))
+	    [clojure.contrib.str-utils :as str-u])
+  (:import (java.io File)))
 
-(def *os-info* {:os-type (System/getProperty "os.name")})
-
-(defn exec [command]
+(defn exec
   "Function to pass string as full command to make shell command easier"
-    (shell/sh "/bin/sh" "-c" command :return-map true))
+  [#^String command]
+  (shell/sh "/bin/sh" "-c" command :return-map true))
 
-(defmacro check-exit [exit & good-exit-list]
+(defmacro check-exit 
   "Macro to check if exit code returned by command is valid"
+  [exit & good-exit-list]
   `(if (seq/includes? '~good-exit-list ~exit)
      true false))
 
-(defn move-file [file1 file2]
+(defn move-file
   "Function to move (or rename) file1 to file2"
+  [file1 file2]
   (let [output (exec (str "mv " file1 " " file2))]
-      (check-exit (output :exit) 0)))
+    (check-exit (:exit output) 0)))
 
-(defn remove-file [file]
+(defn remove-file
   "Function to remove file"
-  (let [output (exec (str "rm " file))]
-    (check-exit (output :exit) 0)))
+  [file]
+  (let [output (exec (str "rm -rf " file))]
+    (check-exit (:exit output) 0)))
+	
 
-(defn- get-df-info [fs]
-  "Function that returns a vector of df -k"
-  (vec (str-u/re-split #"\s+" 
-		       (:out (exec (str "df -k" " " fs " " "| grep -v \"^Filesystem\""))))))
+(defn list-files
+  "Function that returns sequence of files/directories of provided directory"
+  [directory]
+  (map #(.toString %) (.listFiles (File. directory))))
 
-; (get-fs-info fs) => (device mount-point total used percent-used)
+(defn list-home-files
+  "Function that returns sequence of files/directories in users home directory"
+  []
+  (list-files 
+   (System/getProperty "user.home")))
 
-(defmulti fs-info (fn [os fs] (:os-type os)))
-
-(defmethod fs-info :default (println "Operating System not implemented"))
-
-(defmethod fs-info "Mac OS X" [os fs]
-  (let [df-out (get-df-info fs)
-	device (df-out 0)
-	mount-point (df-out 5)
-	total (Integer. (df-out 1))
-	used (Integer. (df-out 2))
-	percent-used (* (float (/ used total)) 100)]
-    (list device mount-point total used percent-used)))
-
-(defn get-fs-info [fs] (fs-info *os-info* fs))
+(defn file-exists?
+  "Function that tests whether or not a file/directory exists"
+  [file]
+  (.exists (File. file)))
