@@ -10,7 +10,7 @@
 
 (defn- get-df-info
   "Function that returns a vector of df -k"
-  [fs]
+  [#^String fs]
   (vec (str-u/re-split #"\s+" 
 		       (:out (u-sys/exec (str "df -k " fs " | grep -v \"^Filesystem\""))))))
 
@@ -18,7 +18,7 @@
   "Function to get filesystem information"
   (fn [fs] (:os-type *os-info*)))
 
-(defmethod fs-info :default [fs] (println "Operating System not implemented"))
+(defmethod fs-info :default [#^String fs] (println "Operating System not implemented"))
 
 (defmethod fs-info "Mac OS X" [#^String fs]
   (let [df-out (get-df-info fs)
@@ -34,4 +34,5 @@
   (fn [] (:os-type *os-info*)))
 
 (defmethod fs-list "Mac OS X" []
-  (
+  (vec (str-u/re-split #"\n"
+		       (:out (u-sys/exec (str "mount | grep hfs | awk '{print $3}'"))))))
