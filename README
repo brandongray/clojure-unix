@@ -14,3 +14,7 @@ A Unix filesystem related library which contains OS specific (filesystem specifi
 (ns clojure.unix.unix-file)
 
 A Unix file related library which contains common file manipulations.  These tasks include counting lines, prefixing, commenting, etc.
+
+(ns clojure.unix.automation)
+
+A Unix automation library which defines events, tasks and task lists.  In conjunction with other clojure-unix namespace this can be used to automation Unix system administration tasks.
