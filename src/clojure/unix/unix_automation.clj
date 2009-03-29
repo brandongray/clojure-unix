@@ -27,7 +27,7 @@
 (defn make-list
   "This function creates a task list"
   ([task] (make-list "NA" task))
-  ([comment task] (struct list-struct comment (seq task))))
+  ([comment task] (struct list-struct comment (seq (list task)))))
 
 (defn exec-event
   "This function executes an event and returns map with success boolean and output"
