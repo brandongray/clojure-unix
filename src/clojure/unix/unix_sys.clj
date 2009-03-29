@@ -18,23 +18,22 @@
 
 (defmacro check-exit 
   "Macro to check if exit code returned by command is valid"
-  [#^Integer exit & good-exit-list]
-  `(if (seq/includes? '~good-exit-list ~exit)
+  [#^Integer exit good-exit-list]
+  `(if (seq/includes? ~good-exit-list ~exit)
      true false))
 
 (defn move-file
   "Function to move (or rename) file1 to file2"
   [#^String file1 #^String file2]
   (let [output (exec (str "mv " file1 " " file2))]
-    (check-exit (:exit output) 0)))
+    (check-exit (:exit output) '(0))))
 
 (defn remove-file
   "Function to remove file"
   [#^String file]
   (let [output (exec (str "rm -rf " file))]
-    (check-exit (:exit output) 0)))
+    (check-exit (:exit output) '(0))))
 	
-
 (defn list-files
   "Function that returns sequence of files/directories of provided directory"
   [#^String directory]
