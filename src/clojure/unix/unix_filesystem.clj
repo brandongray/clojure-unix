@@ -8,6 +8,13 @@
 ; Global containing operating system related information
 (def *os-info* {:os-type (System/getProperty "os.name")})
 
+(defn string->int
+  "Function that turns a string into an Integer"
+  [num]
+  (try
+   (Integer/parseInt num)
+   (catch NumberFormatException ne)))
+
 (defn- get-df-info
   "Function that returns a vector of df -k"
   [#^String fs]
@@ -24,8 +31,8 @@
   (let [df-out (get-df-info fs)
 	device (df-out 0)
 	mount-point (df-out 5)
-	total (Integer. (df-out 1))
-	used (Integer. (df-out 2))
+	total (string->int (df-out 1))
+	used (string->int (df-out 2))
 	percent-used (* (float (/ used total)) 100)]
     (list device mount-point total used percent-used)))
 
