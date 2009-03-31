@@ -27,7 +27,7 @@
 (defn make-list
   "This function creates a task list"
   ([task] (make-list "NA" task))
-  ([comment task] (struct list-struct comment (seq (list task)))))
+  ([comment task] (struct list-struct comment (vector task))))
 
 (defn exec-event
   "This function executes an event and returns map with success boolean and output"
@@ -49,17 +49,18 @@
 	"ERROR")
       (run-task pre-task))))
 
-(defn insert-seq
-  "Function to insert item in a seq"
-  [seq n item]
-  (concat (take (dec n) seq) 
+(defn insert-vec
+  "Function to insert item in a vec"
+  [my-vec n item]
+  (vec
+   (concat (take (dec n) my-vec) 
 	  (list item) 
-	  (drop (dec n) seq)))
+	  (drop (dec n) my-vec))))
 
-(defn add-seq-end
-  "Function to add item to end of seq"
-  [seq item]
-  (concat seq (list item)))
+(defn add-vec-end
+  "Function to add item to end of vec"
+  [my-vec item]
+  (vec (concat my-vec (list item))))
 
 (defn run-list
   "Function that processes / runs a task list"

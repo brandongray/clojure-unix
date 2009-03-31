@@ -9,8 +9,8 @@
 (def *os-info* {:os-type (System/getProperty "os.name")})
 
 (defn string->int
-  "Function that turns a string into an Integer"
-  [num]
+  "Function that turns a String into an Integer"
+  [#^String num-str]
   (try
    (Integer/parseInt num)
    (catch NumberFormatException ne)))
