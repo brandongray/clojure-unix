@@ -2,8 +2,7 @@
 ; Brandon Gray (started 3/28/09)
 
 (ns clojure.unix.unix-automation
-  (:use (clojure.unix.unix-sys)
-	(clojure.contrib.seq-utils)))
+  (:use [clojure.unix.unix-sys :only (exec check-exit)]))
 
 (defstruct event-struct :comment :command :return-codes)
 
@@ -52,7 +51,7 @@
 (defn insert-vec
   "Function to insert item in a vec"
   [my-vec n item]
-  (vec
+  (into []
    (concat (take (dec n) my-vec) 
 	  (list item) 
 	  (drop (dec n) my-vec))))
@@ -60,7 +59,7 @@
 (defn add-vec-end
   "Function to add item to end of vec"
   [my-vec item]
-  (vec (concat my-vec (list item))))
+  (into [] (concat my-vec (list item))))
 
 (defn run-list
   "Function that processes / runs a task list"

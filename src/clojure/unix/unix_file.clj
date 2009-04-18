@@ -2,9 +2,8 @@
 ; Brandon Gray (started 3/20/09)
 
 (ns clojure.unix.unix-file
-  (:use (clojure.unix.unix-sys)
-	(clojure.contrib.str-utils)
-	(clojure.contrib.duck-streams))
+  (:use [clojure.contrib.str-utils :only (re-split str-join)]
+	[clojure.contrib.duck-streams :only (spit)])
   (:import (java.io File)
 	   (java.util.regex Pattern)))
 

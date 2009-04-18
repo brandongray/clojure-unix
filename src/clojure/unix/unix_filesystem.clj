@@ -2,8 +2,8 @@
 ; Brandon Gray (started 3/20/09)
 
 (ns clojure.unix.unix-filesystem
-  (:use (clojure.unix.unix-sys)
-	(clojure.contrib.str-utils)))
+  (:use [clojure.unix.unix-sys :only (exec)]
+	[clojure.contrib.str-utils :only (re-split)]))
 
 ; Global containing operating system related information
 (def *os-info* {:os-type (System/getProperty "os.name")})
@@ -18,7 +18,7 @@
 (defn- get-df-info
   "Function that returns a vector of df -k"
   [#^String fs]
-  (vec (re-split #"\s+" 
+  (into [] (re-split #"\s+" 
 		       (:out (exec (str "df -k " fs " | grep -v \"^Filesystem\""))))))
 
 (defmulti fs-info
@@ -41,5 +41,5 @@
   (fn [] (:os-type *os-info*)))
 
 (defmethod fs-list "Mac OS X" []
-  (vec (re-split #"\n"
+  (into [] (re-split #"\n"
 		       (:out (exec (str "mount | grep hfs | awk '{print $3}'"))))))

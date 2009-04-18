@@ -6,9 +6,8 @@
 ;; file-size (f1) : size of f1 in bytes
 
 (ns clojure.unix.unix-sys
-  (:use (clojure.contrib.shell-out)
-	(clojure.contrib.seq-utils)
-	(clojure.contrib.str-utils))
+  (:use [clojure.contrib.shell-out :only (sh)]
+	[clojure.contrib.seq-utils :only (includes?)])
   (:import (java.io File)))
 
 (defn exec
