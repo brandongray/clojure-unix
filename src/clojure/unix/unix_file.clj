@@ -2,16 +2,16 @@
 ; Brandon Gray (started 3/20/09)
 
 (ns clojure.unix.unix-file
-  (:require [clojure.unix.unix-sys :as u-sys]
-	    [clojure.contrib.str-utils :as str-u]
-	    [clojure.contrib.duck-streams :as duck])
+  (:use (clojure.unix.unix-sys)
+	(clojure.contrib.str-utils)
+	(clojure.contrib.duck-streams))
   (:import (java.io File)
 	   (java.util.regex Pattern)))
 
 (defn- file-lines
   "Function that returns sequence with the lines of a file"
   [#^String file]
-  (str-u/re-split #"\n" (slurp file)))
+  (re-split #"\n" (slurp file)))
 
 (defn count-lines
   "Counts the number of lines in a file"
@@ -41,7 +41,7 @@
 (defn comment-file
   "Function which writes file based on lines which match regex given"
   [#^String file #^Pattern regex]
-  (duck/spit file (str-u/str-join "\n" (map-file #(comment-line regex %) file))))
+  (spit file (str-join "\n" (map-file #(comment-line regex %) file))))
 
 (defn newer-than?
   "Determines if file1 is newer than file2"

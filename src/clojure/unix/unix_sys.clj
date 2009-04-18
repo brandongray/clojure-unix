@@ -6,20 +6,20 @@
 ;; file-size (f1) : size of f1 in bytes
 
 (ns clojure.unix.unix-sys
-  (:require [clojure.contrib.shell-out :as shell]
-	    [clojure.contrib.seq-utils :as seq]
-	    [clojure.contrib.str-utils :as str-u])
+  (:use (clojure.contrib.shell-out)
+	(clojure.contrib.seq-utils)
+	(clojure.contrib.str-utils))
   (:import (java.io File)))
 
 (defn exec
   "Function to pass string as full command to make shell command easier"
   [#^String command]
-  (shell/sh "/bin/sh" "-c" command :return-map true))
+  (sh "/bin/sh" "-c" command :return-map true))
 
 (defmacro check-exit 
   "Macro to check if exit code returned by command is valid"
   [#^Integer exit good-exit-list]
-  `(if (seq/includes? ~good-exit-list ~exit)
+  `(if (includes? ~good-exit-list ~exit)
      true false))
 
 (defn move-file
