@@ -3,14 +3,14 @@
 
 (ns clojure.unix.unix-file
   (:use [clojure.contrib.str-utils :only (re-split str-join)]
-	[clojure.contrib.duck-streams :only (spit)])
+	[clojure.contrib.duck-streams :only (spit reader)])
   (:import (java.io File)
 	   (java.util.regex Pattern)))
 
 (defn- file-lines
-  "Function that returns sequence with the lines of a file"
+  "Function that returns lazy sequence with the lines of a file"
   [#^String file]
-  (re-split #"\n" (slurp file)))
+  (line-seq (reader file)))
 
 (defn count-lines
   "Counts the number of lines in a file"
