@@ -3,7 +3,7 @@
 
 (ns clojure.unix.unix-file
   (:use [clojure.contrib.str-utils :only (re-split str-join)]
-	[clojure.contrib.duck-streams :only (spit reader)])
+	[clojure.contrib.duck-streams :only (reader write-lines)])
   (:import (java.io File)
 	   (java.util.regex Pattern)))
 
@@ -37,10 +37,23 @@
   [#^Pattern regex #^String line]
   (line-prefix regex line "# "))
 
+(defn my-write-lines
+  "Wrapper for 'clojure.contrib.duck-streams/write-lines using a temp file"
+  [f lines]
+  (let [temp-file (File/createTempFile "my-temp" nil)
+	temp-file-name (.toString temp-file)]
+    (do
+      (write-lines temp-file-name lines)
+      (if (.renameTo temp-file (File. f))
+	true
+	(do 
+	  (.delete temp-file)
+	  false)))))
+
 (defn comment-file
   "Function which writes file based on lines which match regex given"
   [#^String file #^Pattern regex]
-  (spit file (str-join "\n" (map-file #(comment-line regex %) file))))
+  (my-write-lines file (map-file #(comment-line regex %) file)))
 
 (defn newer-than?
   "Determines if file1 is newer than file2"
